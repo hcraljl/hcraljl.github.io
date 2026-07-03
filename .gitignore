@@ -5,8 +5,8 @@ node_modules/
 dist/
 dist-ssr/
 
-# Large video files (use external hosting / Git LFS)
-*.mp4
+# Root-level video files (personal backup)
+/*.mp4
 
 # Root-level personal documents (not project assets)
 /*.docx
