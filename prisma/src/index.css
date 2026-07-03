@@ -1,0 +1,103 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary: #e8e6d8;
+  --color-surface: #1a1a1a;
+  --color-surface-light: #242424;
+  --color-surface-dark: #111111;
+  --color-accent: #c9a96e;
+  --color-accent-light: #dfc08a;
+  --color-text-muted: #888888;
+  --color-text-dim: #555555;
+  --font-family-sans: 'Almarai', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+  --font-family-serif: '"Instrument Serif"', serif;
+  --breakpoint-xl: 1280px;
+  --breakpoint-2xl: 1536px;
+  --breakpoint-3xl: 1700px;
+}
+
+* {
+  font-family: var(--font-family-sans);
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  @apply bg-black text-primary antialiased;
+  overflow-x: hidden;
+}
+
+::selection {
+  background: rgba(201, 169, 110, 0.3);
+  color: #fff;
+}
+
+/* Noise overlay for hero video */
+.noise-overlay {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 10;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1' height='1'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='1' height='1' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: cover;
+  opacity: 0.5;
+  mix-blend-mode: overlay;
+}
+
+/* Subtle noise background */
+.bg-noise-subtle {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1' height='1'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='1' height='1' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: cover;
+  opacity: 0.08;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #000;
+}
+::-webkit-scrollbar-thumb {
+  background: #333;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+/* Container */
+.container-max {
+  max-width: 1700px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+.galaxy-bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  pointer-events: auto;
+}
+
+/* Section divider line */
+.section-divider {
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(201, 169, 110, 0.2), transparent);
+}

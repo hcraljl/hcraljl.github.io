@@ -1,0 +1,778 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>黄楚荣 · AI 应用工程师作品集</title>
+<link href="https://fonts.googleapis.com/css2?family=Almarai:wght@300;400;700;800&family=Instrument+Serif:ital@1&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/lucide@latest"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.7/dist/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.7/dist/ScrollTrigger.min.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --primary:#e8e6d8;
+  --surface:#1a1a1a;
+  --surface-light:#242424;
+  --surface-dark:#111;
+  --accent:#c9a96e;
+  --accent-light:#dfc08a;
+  --text-muted:#888;
+}
+html{scroll-behavior:smooth}
+body{background:#000;color:var(--primary);font-family:'Almarai',sans-serif;overflow-x:hidden;antialiased:-webkit-font-smoothing:antialiased}
+::selection{background:rgba(201,169,110,.3);color:#fff}
+
+/* Scrollbar */
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-track{background:#000}
+::-webkit-scrollbar-thumb{background:#333;border-radius:3px}
+
+/* Container */
+.container-max{max-width:1700px;margin:0 auto;padding:0 24px}
+
+/* Noise overlay for video */
+.noise{position:absolute;inset:0;pointer-events:none;z-index:10;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");background-size:150px;opacity:.5;mix-blend-mode:overlay}
+
+/* Section divider */
+.section-divider{width:100%;height:1px;background:linear-gradient(90deg,transparent,rgba(201,169,110,.2),transparent)}
+
+/* Navbar */
+.navbar{position:fixed;top:0;left:0;right:0;z-index:50;opacity:0;transform:translateY(-20px);animation:fadeInDown .6s cubic-bezier(.16,1,.3,1) .5s forwards}
+@keyframes fadeInDown{to{opacity:1;transform:translateY(0)}}
+.navbar-inner{display:flex;align-items:center;justify-content:center;height:60px;border-radius:0 0 16px 16px;background:rgba(0,0,0,.6);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-bottom:1px solid rgba(255,255,255,.06)}
+.navbar a{font-size:20px;color:rgba(255,255,255,.7);text-decoration:none;transition:color .3s;position:relative}
+.navbar a:hover{color:var(--accent)}
+.navbar a::after{content:'';position:absolute;bottom:-4px;left:0;width:0;height:1px;background:var(--accent);transition:width .3s}
+.navbar a:hover::after{width:100%}
+.nav-links{display:flex;gap:36px}
+@media(max-width:767px){.nav-links{display:none}}
+
+/* Hero */
+.hero-video{position:absolute;inset:0;z-index:0}
+.hero-video video{width:100%;height:100%;object-fit:cover}
+.hero-overlay{position:absolute;inset:0;background:linear-gradient(#000 0%,rgba(0,0,0,.4) 30%,rgba(0,0,0,.4) 60%,#000 100%)}
+.hero-content{position:absolute;left:50%;transform:translateX(-50%);z-index:10;text-align:center;max-width:1000px;width:100%;padding:0 16px;bottom:110px}
+.hero-title span{display:inline-block;font-size:clamp(48px,9vw,140px);font-weight:800;color:var(--primary);line-height:.9;letter-spacing:-.02em}
+.hero-subtitle{color:rgba(255,255,255,.6);font-size:clamp(14px,1.8vw,20px);max-width:640px;margin:0 auto;line-height:1.6}
+.scroll-indicator{position:absolute;bottom:32px;left:50%;transform:translateX(-50%);z-index:10;display:flex;flex-direction:column;align-items:center;gap:8px;color:rgba(255,255,255,.4);font-size:10px;letter-spacing:.2em;text-transform:uppercase;text-decoration:none;cursor:pointer}
+.scroll-indicator svg{width:16px;height:16px;animation:bounce 2s infinite}
+@keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(8px)}}
+
+/* Progress bar */
+.progress-bar{position:fixed;top:0;left:0;right:0;height:2px;background:rgba(201,169,110,.6);z-index:100;transform-origin:left;transform:scaleX(0)}
+
+/* Section common */
+.section{position:relative;overflow:hidden}
+.section-black{background:#000}
+.section-dark{background:var(--surface-dark)}
+
+/* About */
+.about-grid{display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center;padding:120px 12% 120px 0}
+@media(max-width:1023px){.about-grid{grid-template-columns:1fr;gap:48px;padding:80px 0}}
+.avatar-frame{display:flex;justify-content:center}
+@media(min-width:1024px){.avatar-frame{justify-content:flex-end}}
+.avatar-container{position:relative;width:380px;height:380px}
+@media(min-width:640px){.avatar-container{width:420px;height:420px}}
+.avatar-border{position:absolute;top:-20px;left:-20px;right:-20px;bottom:-20px;border:1px solid rgba(201,169,110,.15);border-radius:16px}
+.avatar-border2{position:absolute;top:-12px;left:-12px;right:-12px;bottom:-12px;border:1px solid rgba(255,255,255,.05);border-radius:16px}
+.avatar-img-wrapper{position:absolute;inset:0;background:var(--surface);border-radius:16px;overflow:hidden}
+.avatar-img-wrapper img{width:100%;height:100%;object-fit:cover}
+.avatar-gradient{position:absolute;inset:0;background:linear-gradient(transparent 60%,rgba(0,0,0,.4))}
+.avatar-corner{position:absolute;top:-12px;right:-12px;width:80px;height:80px;border-top:2px solid rgba(201,169,110,.4);border-right:2px solid rgba(201,169,110,.4);border-radius:0 16px 0 0}
+.bio-section{display:flex;flex-direction:column;gap:40px}
+.label{color:var(--accent);font-size:12px;letter-spacing:.3em;text-transform:uppercase}
+.heading{font-size:clamp(36px,5vw,64px);font-weight:800;color:var(--primary);line-height:1.1}
+.text-muted{color:rgba(255,255,255,.4);font-size:14px;line-height:1.7}
+.text-dim{color:rgba(255,255,255,.3);font-size:12px}
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:32px}
+.stat-value{font-size:36px;font-weight:800;color:var(--accent)}
+.stat-label{color:rgba(255,255,255,.4);font-size:13px;margin-top:6px}
+.edu-card{background:var(--surface);border-radius:16px;padding:28px 32px;max-width:400px;border:1px solid rgba(255,255,255,.04)}
+.edu-card h3{color:var(--accent);font-size:12px;letter-spacing:.1em;text-transform:uppercase;margin-bottom:16px}
+.edu-title{color:var(--primary);font-size:16px;font-weight:500}
+.edu-sub{color:rgba(255,255,255,.5);font-size:12px}
+.contact-row{display:flex;flex-wrap:wrap;gap:24px}
+
+/* Projects */
+.projects-list{display:flex;flex-direction:column;gap:80px}
+.project-card{background:var(--surface);border-radius:16px;overflow:hidden;border:1px solid rgba(255,255,255,.06);transition:border-color .5s;cursor:pointer}
+.project-card:hover{border-color:rgba(201,169,110,.2)}
+.project-video{position:relative;height:400px;background:#000;overflow:hidden}
+@media(max-width:767px){.project-video{height:200px}}
+.project-video video{width:100%;height:100%;object-fit:cover;transition:transform .7s}
+.project-card:hover .project-video video{transform:scale(1.05)}
+.project-video-overlay{position:absolute;inset:0;background:linear-gradient(var(--surface) 0%,rgba(26,26,26,.4) 30%,transparent 100%)}
+.project-role{position:absolute;bottom:24px;left:24px;background:rgba(201,169,110,.2);color:var(--accent);font-size:12px;padding:6px 16px;border-radius:999px;backdrop-filter:blur(8px)}
+.project-body{padding:40px 48px}
+.project-flex{display:grid;grid-template-columns:1fr 320px;gap:48px}
+@media(max-width:1023px){.project-flex{grid-template-columns:1fr;gap:24px}}
+.project-title{font-size:clamp(24px,3vw,36px);font-weight:800;color:var(--primary);margin-bottom:4px}
+.project-period{color:rgba(255,255,255,.3);font-size:12px;margin-bottom:24px}
+.project-desc{color:rgba(255,255,255,.6);font-size:15px;line-height:1.7;margin-bottom:24px}
+.tag{display:inline-block;color:rgba(201,169,110,.7);background:rgba(201,169,110,.1);font-size:12px;padding:4px 12px;border-radius:999px;margin-right:8px;margin-bottom:8px}
+.project-link{display:inline-flex;align-items:center;gap:8px;color:var(--accent);font-size:14px;text-decoration:none}
+.project-link svg{width:16px;height:16px;transition:transform .3s}
+.project-link:hover svg{transform:translateX(4px)}
+.highlights-title{color:rgba(255,255,255,.3);font-size:12px;text-transform:uppercase;letter-spacing:.05em;margin-bottom:20px}
+.highlights-list{list-style:none;display:flex;flex-direction:column;gap:16px}
+.highlights-list li{display:flex;align-items:flex-start;gap:12px;color:rgba(255,255,255,.5);font-size:14px;line-height:1.6}
+.highlights-dot{width:6px;height:6px;border-radius:50%;background:rgba(201,169,110,.6);margin-top:8px;flex-shrink:0}
+
+/* Skills */
+.skills-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:28px}
+@media(max-width:1023px){.skills-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:639px){.skills-grid{grid-template-columns:1fr}}
+.skill-card{background:var(--surface);border-radius:16px;padding:36px;border:1px solid rgba(255,255,255,.04);position:relative;overflow:hidden;cursor:default}
+.skill-card:hover{border-color:rgba(201,169,110,.2)}
+.skill-icon{width:56px;height:56px;border-radius:12px;background:rgba(201,169,110,.1);display:flex;align-items:center;justify-content:center;margin-bottom:24px}
+.skill-title{font-size:22px;font-weight:800;color:var(--primary);margin-bottom:16px}
+.skill-desc{color:rgba(255,255,255,.4);font-size:14px;line-height:1.7;margin-bottom:24px}
+.skill-tags{display:flex;flex-wrap:wrap;gap:8px}
+.skill-tag{font-size:12px;color:rgba(201,169,110,.6);background:rgba(201,169,110,.1);padding:6px 14px;border-radius:999px}
+
+/* Honors */
+.honors-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:24px}
+@media(max-width:1023px){.honors-grid{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:639px){.honors-grid{grid-template-columns:1fr}}
+.honor-card{background:var(--surface);border-radius:16px;padding:28px;border:1px solid rgba(255,255,255,.04);cursor:default}
+.honor-card:hover{border-color:rgba(201,169,110,.2)}
+.honor-header{display:flex;align-items:flex-start;gap:12px;margin-bottom:16px}
+.honor-icon{width:36px;height:36px;border-radius:8px;background:rgba(201,169,110,.1);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.honor-level{font-size:10px;padding:2px 10px;border-radius:999px;display:inline-block;margin-right:6px}
+.level-intl{background:rgba(59,130,246,.2);color:#60a5fa;border:1px solid rgba(59,130,246,.2)}
+.level-prov{background:rgba(245,158,11,.2);color:#fbbf24;border:1px solid rgba(245,158,11,.2)}
+.level-cert{background:rgba(16,185,129,.2);color:#34d399;border:1px solid rgba(16,185,129,.2)}
+.honor-year{color:rgba(255,255,255,.15);font-size:10px}
+.honor-title{font-size:14px;font-weight:800;color:var(--primary);line-height:1.3}
+.honor-desc{font-size:12px;color:rgba(201,169,110,.6);margin-top:4px}
+.cert-img{position:relative;border-radius:8px;overflow:hidden;background:var(--surface-dark);margin-top:16px}
+.cert-img img{width:100%;display:block;object-fit:contain;transition:opacity .3s}
+.cert-dots{position:absolute;bottom:12px;left:50%;transform:translateX(-50%);display:flex;gap:6px;z-index:10}
+.cert-dot{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.3);cursor:pointer;border:none;padding:0}
+.cert-dot.active{background:var(--accent);width:16px}
+
+/* Contact */
+.contact-watermark{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none;opacity:.03}
+.contact-watermark span{font-size:20vw;font-weight:800;color:#fff;letter-spacing:-.05em}
+.contact-heading{font-size:clamp(48px,8vw,120px);font-weight:800;color:var(--primary);line-height:.9}
+.contact-card{display:flex;align-items:center;gap:12px;background:var(--surface);border:1px solid rgba(255,255,255,.06);border-radius:12px;padding:20px 24px;text-decoration:none;transition:all .3s}
+.contact-card:hover{background:var(--surface-light);border-color:rgba(201,169,110,.2)}
+.btn-primary{display:inline-flex;align-items:center;gap:12px;background:var(--accent);color:#000;font-weight:500;font-size:15px;padding:16px 40px;border-radius:999px;text-decoration:none;transition:all .3s;box-shadow:0 0 20px rgba(201,169,110,.2)}
+.btn-primary:hover{background:#d4b57a;box-shadow:0 0 30px rgba(201,169,110,.4)}
+.btn-social{width:48px;height:48px;border-radius:50%;border:1px solid rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.4);text-decoration:none;transition:all .3s}
+.btn-social:hover{border-color:rgba(201,169,110,.4);color:var(--accent)}
+.footer{border-top:1px solid rgba(255,255,255,.06)}
+
+/* Starfield canvas */
+.starfield-canvas{position:absolute;inset:0;width:100%;height:100%;z-index:0;pointer-events:auto}
+.section-overlay{position:absolute;inset:0;z-index:1;pointer-events:none}
+.section-overlay-black{background:linear-gradient(rgba(0,0,0,.85) 0%,rgba(0,0,0,.6) 50%,rgba(0,0,0,.85) 100%)}
+.section-overlay-dark{background:linear-gradient(rgba(17,17,17,.9) 0%,rgba(17,17,17,.7) 50%,rgba(17,17,17,.9) 100%)}
+.section-z{position:relative;z-index:10}
+
+/* Animations */
+.sr-stagger{opacity:0}
+.py-120{padding:120px 0}
+@media(max-width:767px){.py-120{padding:80px 0}}
+.mb-80{margin-bottom:80px}
+.mb-60{margin-bottom:60px}
+.text-center{text-align:center}
+.block{display:block}
+.font-serif{font-family:'Instrument Serif',serif;font-style:italic}
+</style>
+</head>
+<body>
+
+<!-- Progress bar -->
+<div class="progress-bar" id="progress"></div>
+
+<!-- Navbar -->
+<nav class="navbar">
+  <div class="container-max">
+    <div class="navbar-inner">
+      <div class="nav-links">
+        <a href="#hero">首页</a>
+        <a href="#about">经历</a>
+        <a href="#projects">项目</a>
+        <a href="#skills">能力</a>
+        <a href="#honors">荣誉</a>
+        <a href="#contact">联系</a>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- Hero -->
+<section id="hero" class="section" style="height:100vh">
+  <div class="hero-video">
+    <video autoplay loop muted playsinline>
+      <source src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260405_170732_8a9ccda6-5cff-4628-b164-059c500a2b41.mp4" type="video/mp4">
+    </video>
+    <div class="noise"></div>
+    <div class="hero-overlay"></div>
+  </div>
+  <div class="hero-content" id="hero-content">
+    <h1 class="hero-title" id="hero-title">
+      <span>A</span><span>I</span><span>驱</span><span>动</span><span>的</span><span>创</span><span>新</span><span>者</span>
+    </h1>
+    <p class="hero-subtitle" id="hero-sub" style="margin-top:24px">专注于人工智能与大模型应用开发，将前沿 AI 技术转化为可落地的产品解决方案</p>
+  </div>
+  <a href="#about" class="scroll-indicator" id="scroll-btn">
+    <span>Scroll</span>
+    <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 14l-7 7m0 0l-7-7m7 7V3"/></svg>
+  </a>
+</section>
+
+<!-- About -->
+<section id="about" class="section section-black">
+  <canvas class="starfield-canvas" id="sf-about" data-hue="200" data-density="1.2" data-glow="0.5"></canvas>
+  <div class="section-overlay section-overlay-black"></div>
+  <div class="container-max about-grid section-z">
+    <div class="avatar-frame">
+      <div class="avatar-container">
+        <div class="avatar-border"></div>
+        <div class="avatar-border2"></div>
+        <div class="avatar-img-wrapper">
+          <img src="assets/avatar.png" alt="黄楚荣">
+          <div class="avatar-gradient"></div>
+        </div>
+        <div class="avatar-corner"></div>
+      </div>
+    </div>
+    <div class="bio-section">
+      <span class="label">About Me</span>
+      <h2 class="heading">黄楚荣</h2>
+      <p class="text-muted">21 岁在读学生，AI 全栈独立开发者。可独立完成从需求分析到部署上线的项目全流程，覆盖 AI 大模型应用、服务器运维与物联网多领域技术栈。拥有商业化上线应用 + 大型项目落地的经验，学习动手能力突出，做事踏实负责，期望以技术能力助力团队项目高效落地。</p>
+      <div class="stats-grid">
+        <div><div class="stat-value">4+</div><div class="stat-label">项目经验</div></div>
+        <div><div class="stat-value">5000+</div><div class="stat-label">标注图像</div></div>
+        <div><div class="stat-value">90%</div><div class="stat-label">模型精度 (mAP)</div></div>
+        <div><div class="stat-value">省一</div><div class="stat-label">技能大赛</div></div>
+      </div>
+      <div class="edu-card">
+        <h3>教育经历</h3>
+        <p class="edu-title">广东轻工职业技术大学 · 大专</p>
+        <p class="edu-sub" style="margin-top:4px">工业互联网（TCL 学徒班）· 2024.09 - 至今</p>
+        <p class="edu-sub" style="margin-top:2px">人工智能微专业</p>
+        <div style="margin-top:12px;padding-top:12px;border-top:1px solid rgba(255,255,255,.06)">
+          <p class="text-dim">· 大一下入选「广轻大+TCL 集团」联合培养工业互联网技术专业，获 TCL 实习资格</p>
+          <p class="text-dim">· 大二上入选「广轻大+广州易方科技」人工智能技术应用专业</p>
+        </div>
+      </div>
+      <div class="contact-row">
+        <span class="text-muted" style="display:flex;align-items:center;gap:6px"><i data-lucide="mail" style="width:16px;height:16px;color:var(--accent)"></i> 邮箱: 2774743173@qq.com</span>
+        <span class="text-muted" style="display:flex;align-items:center;gap:6px"><i data-lucide="phone" style="width:16px;height:16px;color:var(--accent)"></i> 电话: 17825524646</span>
+        <span class="text-muted" style="display:flex;align-items:center;gap:6px"><i data-lucide="map-pin" style="width:16px;height:16px;color:var(--accent)"></i> 地点: 深圳</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- Projects -->
+<section id="projects" class="section section-dark" style="padding:120px 0">
+  <canvas class="starfield-canvas" id="sf-projects" data-hue="30" data-density="1" data-glow="0.4"></canvas>
+  <div class="section-overlay section-overlay-dark"></div>
+  <div class="container-max section-z">
+    <div class="text-center mb-80">
+      <span class="label block" style="margin-bottom:16px">Portfolio</span>
+      <h2 class="heading">精选项目</h2>
+      <p class="text-muted" style="margin-top:16px;max-width:640px;margin-left:auto;margin-right:auto">从 AI 应用到工程落地，每一个项目都是技术与创意的融合</p>
+    </div>
+    <div class="projects-list" id="projects-list"></div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- Skills -->
+<section id="skills" class="section section-black" style="padding:120px 0">
+  <canvas class="starfield-canvas" id="sf-skills" data-hue="260" data-density="1.3" data-glow="0.5"></canvas>
+  <div class="section-overlay section-overlay-black"></div>
+  <div class="container-max section-z">
+    <div class="text-center mb-80">
+      <span class="label block" style="margin-bottom:16px">Capabilities</span>
+      <h2 class="heading">个人优势</h2>
+      <p class="text-muted" style="margin-top:16px;max-width:640px;margin-left:auto;margin-right:auto">多维度技术栈，覆盖 AI 开发、全栈工程、运维部署与产品管理</p>
+    </div>
+    <div class="skills-grid" id="skills-grid"></div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- Honors -->
+<section id="honors" class="section section-dark" style="padding:120px 0">
+  <canvas class="starfield-canvas" id="sf-honors" data-hue="45" data-density="0.8" data-glow="0.6"></canvas>
+  <div class="section-overlay section-overlay-dark"></div>
+  <div class="container-max section-z">
+    <div class="text-center mb-80">
+      <span class="label block" style="margin-bottom:16px">Honors &amp; Awards</span>
+      <h2 class="heading">荣誉证书</h2>
+      <p class="text-muted" style="margin-top:16px;max-width:640px;margin-left:auto;margin-right:auto">在创新创业与专业技能领域获得的多项认可</p>
+    </div>
+    <div class="honors-grid" id="honors-grid"></div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- Contact -->
+<section id="contact" class="section section-black" style="min-height:100vh;display:flex;align-items:center">
+  <canvas class="starfield-canvas" id="sf-contact" data-hue="180" data-density="1.5" data-glow="0.6" data-speed="0.6"></canvas>
+  <div class="section-overlay section-overlay-black"></div>
+  <div class="contact-watermark"><span>CONTACT</span></div>
+  <div class="container-max section-z" style="width:100%;padding-top:120px;padding-bottom:120px">
+    <div class="text-center">
+      <p class="label block" style="margin-bottom:24px">GET IN TOUCH</p>
+      <h2 class="contact-heading">让我们一起创造</h2>
+      <div style="height:80px"></div>
+      <div style="display:flex;flex-wrap:wrap;justify-content:center;gap:16px;margin-bottom:32px" id="contact-cards">
+        <a href="mailto:2774743173@qq.com" class="contact-card">
+          <i data-lucide="mail" style="width:16px;height:16px;color:var(--accent)"></i>
+          <div><div style="color:rgba(255,255,255,.3);font-size:10px;text-transform:uppercase;letter-spacing:.1em">Email</div><div style="color:var(--primary);font-size:15px)">2774743173@qq.com</div></div>
+        </a>
+        <a href="tel:17825524646" class="contact-card">
+          <i data-lucide="phone" style="width:16px;height:16px;color:var(--accent)"></i>
+          <div><div style="color:rgba(255,255,255,.3);font-size:10px;text-transform:uppercase;letter-spacing:.1em">Phone</div><div style="color:var(--primary);font-size:15px">17825524646</div></div>
+        </a>
+        <a href="#" class="contact-card">
+          <i data-lucide="map-pin" style="width:16px;height:16px;color:var(--accent)"></i>
+          <div><div style="color:rgba(255,255,255,.3);font-size:10px;text-transform:uppercase;letter-spacing:.1em">Location</div><div style="color:var(--primary);font-size:15px">深圳</div></div>
+        </a>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:center;gap:16px;flex-wrap:wrap">
+        <a href="mailto:2774743173@qq.com" class="btn-primary">
+          <i data-lucide="send" style="width:16px;height:16px"></i>
+          发送邮件
+          <i data-lucide="arrow-up-right" style="width:16px;height:16px"></i>
+        </a>
+        <a href="#" class="btn-social" aria-label="GitHub"><i data-lucide="git-fork" style="width:16px;height:16px"></i></a>
+        <a href="#" class="btn-social" aria-label="LinkedIn"><i data-lucide="link-2" style="width:16px;height:16px"></i></a>
+      </div>
+    </div>
+    <div class="footer" style="margin-top:120px;padding-top:32px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:16px">
+      <p style="color:rgba(255,255,255,.2);font-size:12px">&copy; 2026 · AI 应用工程师作品集 · 黄楚荣</p>
+      <p style="color:rgba(255,255,255,.15);font-size:12px">Built with GSAP</p>
+    </div>
+  </div>
+</section>
+
+<script>
+// ========== DATA ==========
+const PROJECTS = [
+  {
+    id:'linkhome', title:'LinkHome 链家装', role:'开发者', period:'2026.05 - 2026.06',
+    desc:'基于 AI 大模型的智能家装微信小程序，通过上传毛坯房照片和风格需求自动生成带家具标注的效果图，并支持一键跳转电商购买，结合"AI 设计 + 电商导购 + 用户社区"模式。',
+    highlights:['从 0 到 1 独立完成，覆盖需求分析、技术选型、前后端开发、AI 接入、路演答辩全流程','实现"拍照→AI 生成→商品购买"的商业闭环，具备实际变现能力','2026 年「挑战杯」河北省大学生创业竞赛 省级奖项'],
+    tags:['AI 大模型','小程序','全栈开发','电商导购','用户画像'],
+    video:'../prisma/src/assets/videos/LinkHome链家装.mp4',
+    responsibilities:[
+      '独立完成产品规划、技术选型与全栈开发，采用微信云开发架构实现前后端一体化，零服务器成本支撑完整业务闭环。',
+      '封装大模型图生图 API 与对话接口，通过云函数安全中转；设计 Prompt 工程方案，将用户偏好标签拼接为结构化提示词，生成效果图还原度高。',
+      '基于 cover-view 组件实现效果图家具热点标注，调用 wx.navigateToMiniProgram 打通"设计即购买"的跳转链路，形成可落地的商业模式——该模式为核心加分项。',
+      '基于收藏与对话记录，构建风格、色系、材质等偏好标签体系，实现 AI 个性化推荐，形成"越用越懂你"的数据飞轮。',
+      '作为项目代表完成挑战杯路演答辩，负责商业计划书撰写与商业模式阐述。'
+    ],
+    highlights_detail:[
+      '从 0 到 1 独立完成，覆盖需求分析、技术选型、前后端开发、AI 接入、路演答辩全流程',
+      '实现"拍照→AI 生成→商品购买"的商业闭环，具备实际变现能力',
+      '2026 年「挑战杯」河北省大学生创业竞赛省级奖项，获评委对技术创新性和商业可行性的高度认可'
+    ],
+    tech_stack:'微信小程序原生 + 微前端架构 | CloudBase Serverless(Node.js+MongoDB+CDN) | 多模态大模型 API + Prompt Engineering | WebSocket | RESTful API 网关 + 安全中转层 | SDK(wx.navigateToMiniProgram+web-view) | Git Flow + CI/CD'
+  },
+  {
+    id:'drone-inspection', title:'黄河流域坝岸无人机智能巡检系统', role:'模型训练员', period:'2026.04 - 2026.10',
+    desc:'基于 YOLOv5 目标检测算法，结合无人机与 RTSP 实时视频流技术，构建黄河流域坝岸智能巡检系统，实现对坝坡表面裂缝、渗漏点、塌陷沉降、植被异常等 4 类隐患的自动化识别与预警。',
+    highlights:['参与完成数据采集标注、模型训练优化、GPU 环境搭建、视频流接入到系统部署全流程','mAP 90%+，推理速度 52ms/帧，支持 4 类坝岸隐患实时检测','已在黄河流域水利工程完成试点，巡检效率提升 6-8 倍，具备实际推广价值'],
+    tags:['YOLOv5','PyTorch','目标检测','无人机','RTSP'],
+    video:'../prisma/src/assets/videos/黄河流域无人机智能巡检系统.mp4',
+    responsibilities:[
+      '参与完成 5000+ 张黄河流域坝岸图像的采集、标注与预处理。最终模型 mAP 达到 90% 以上，推理速度 52ms/帧，满足实时巡检需求。',
+      '独立完成从零开始的开发环境配置，CUDA 11.8 + cuDNN，PyTorch 2.0 + YOLOv5 GPU 加速训练，将单次训练周期缩短约 70%。对比不同权重尺寸（YOLOv5s/m/l）选定最优，实现检测精度与推理速度的最佳平衡。',
+      '基于 RTSP 协议实现无人机实时视频流接入，打通"采集 → 检测 → 输出"完整数据链路。支持实时显示检测框、类别标签及置信度，自动生成结构化巡检报告。',
+      '采用 Mosaic、MixUp 等数据增强策略提升模型泛化能力。系统已在黄河流域水利工程完成试点验证。'
+    ],
+    highlights_detail:[
+      'mAP 90%+ 检测精度，推理速度 52ms/帧，满足实时巡检需求',
+      '巡检效率提升 6-8 倍，单次覆盖面积相当于人工 3 天工作量',
+      '已成功在黄河流域水利工程试点，具备实际推广价值'
+    ],
+    tech_stack:'PyTorch 2.0 + YOLOv5 | CUDA 11.8 + cuDNN | OpenCV + RTSP | Python 3.9'
+  },
+  {
+    id:'slam-3d', title:'基于 A-LOAM 的塌陷区域高精度三维建模', role:'三维建模工程师', period:'2025.11 - 2026.02',
+    desc:'利用 A-LOAM 激光 SLAM 算法实现高精度三维建模与体积测算，解决传统人工巡检的滞后、规模难判和精度不足等问题，为抢险决策提供精准数据支持。',
+    highlights:['从 0 到 1 独立完成算法研究、环境部署、数据处理、模型优化到体积测算全流程','厘米级三维重建，体积测算误差 ≤5%，全流程 15 分钟快速响应','已在黄河坝岸完成技术验证'],
+    tags:['A-LOAM','SLAM','三维建模','点云处理','体积测算'],
+    video:'../prisma/src/assets/videos/基于A-LOAM的塌陷区域高精度三维建模.mp4',
+    responsibilities:[
+      '基于 Ubuntu 20.04 + ROS Noetic 部署 A-LOAM 算法，掌握 scanRegistration（特征提取）、laserOdometry（帧间匹配）、laserMapping（全局优化）三个并行节点。通过调整参数将无 GPS 环境下三维重建精度提升至厘米级。',
+      '编写 Python 脚本将 .bin 格式原始点云数据转换为 ROS Bag 文件，单帧点云处理量达 12 万点。',
+      '运行 A-LOAM 完成实时建图，实现 1:1 真实场景三维还原。使用 pcl_ros 保存全局点云地图。',
+      '将点云地图导入 CloudCompare，采用 2.5D 体积计算方法，优化网格步长（0.05m）与插值策略后，测算误差控制在 5% 以内。',
+      '独立搭建"数据集→格式转换→SLAM 建图→体积测算"完整链路，全流程 15 分钟内完成。'
+    ],
+    highlights_detail:[
+      '厘米级三维重建精度',
+      '体积测算误差控制在 5% 以内（准确率 98.7%）',
+      '独立完成从数据采集到体积测算的完整技术链路',
+      '全流程响应时间缩短至 15 分钟，已在黄河坝岸实际应用中验证有效'
+    ],
+    tech_stack:'A-LOAM / ROS Noetic | Python 3.8 | CloudCompare | PCL | Ceres Solver | Ubuntu 20.04'
+  },
+  {
+    id:'water-agent', title:'基于千问大模型的水利智能体', role:'项目负责人', period:'2026.05 - 2026.10',
+    desc:'基于千问大模型训练的面向黄河流域基层巡检人员的水利智能体，解决巡检人员以村民为主、操作门槛高及险情处置缺乏即时指导的问题。',
+    highlights:['从 0 到 1 独立完成需求分析、知识库构建、RAG 搭建、多端开发、试点验证全流程','采用"大模型+RAG+水利垂直知识库"智能巡检辅助模式','已在某河务局完成试点测试'],
+    tags:['千问大模型','LangChain','RAG','知识图谱','智能体'],
+    video:'../prisma/src/assets/videos/基于千问大模型的水利智能体.mp4',
+    responsibilities:[
+      '独立完成需求分析、技术选型与系统开发，基于 LangChain 搭建 RAG 流水线，实现向量检索与千问大模型的深度融合。',
+      '整理结构化黄河流域巡检核心场景数据，覆盖堤防巡查、水位监测、渗漏抢险、设备维护等场景。内置 5000+ 条险情应急方案、10000+ 条设备操作说明、30000+ 条水利专业知识。',
+      '完成 Web 管理后台与移动端 H5 原型，支持语音输入与离线缓存，适配黄河沿岸网络不稳定环境。',
+      '已在某河务局进行试点测试，获得一线巡检人员与基层管理部门的积极反馈。'
+    ],
+    highlights_detail:[
+      '基于 LangChain 搭建 RAG 流水线，实现向量检索与大模型深度融合',
+      '构建含 5000+ 条险情方案的专业水利知识库',
+      '支持 Web 管理后台 + 移动端 H5 多端交互',
+      '成功完成试点测试，获一线巡检人员与基层管理部门认可'
+    ],
+    tech_stack:'通义千问 + LoRA 微调 | LangChain + Chroma/FAISS 向量数据库 | RAG + Prompt Engineering | Flask + Vue3 + H5 | ASR 语音识别 + IndexedDB 离线缓存 | Docker 容器化部署'
+  }
+];
+
+const SKILLS = [
+  {icon:'brain',title:'AI 开发与 Vibe Coding',desc:'熟练使用 CodeX、Claude Code、WorkBuddy、COZE 等 AI 开发工具，可独立完成全栈项目从需求分析到部署上线的全流程开发。',tags:['CodeX / Claude Code / COZE','全栈项目全流程','AI 辅助提效']},
+  {icon:'sparkles',title:'LLM 基座与 AI Agent 开发',desc:'基于国内开源 LLM 基座完成部署训练专业智能体、独立训练 YOLO 模型进行目标检测、熟悉COZE工作流完成 AI 应用前后端全链路对接。',tags:['模型训练','LLM基座部署','COZE工作流']},
+  {icon:'rocket',title:'RAG 检索增强与大模型落地',desc:'能使用 LangChain 搭建 RAG 检索增强链路，了解提示词工程、思维链 Prompt 优化，基于 Qwen/GLM 轻量化微调，通过 FastAPI 封装 LLM 推理服务',tags:['LangChain','提示词工程','混合检索RAG', 'LoRA轻量化微调','FastAPI推理接口']},
+  {icon:'server',title:'AI 工程化部署运维',desc:'熟练使用 Linux 系统，掌握 Docker 容器化和虚拟环境conda/Anaconda，用于 AI 训练 / 推理环境隔离、模型打包私有化部署，适配 LLM 与 AIGC 项目线上运维。',tags:['Linux / Docker','conda/Anaconda','GPU推理部署','AI项目运维']},
+  {icon:'database',title:'图像数据处理与深度学习训练',desc:'具备图像数据采集、标注与预处理能力，熟悉 PyTorch 深度学习框架，能够搭建 GPU 加速训练环境,支撑 LLM 微调。',tags:['图像标注与预处理','PyTorch 2.0','GPU 加速训练','模型训练调参']},
+  {icon:'code',title:'全栈开发',desc:'一定程度掌握 HTML/CSS/JS、Python、C 语言等前端与后端开发技术，熟练使用 VSCode、PyCharm、微信开发者工具等开发工具。',tags:['HTML/CSS/JS','Python / C 语言','多端开发工具']}
+];
+
+const HONORS = [
+  {icon:'award',title:'香港数码港 大湾区青年创业计划',desc:'优秀学员 · 团队项目获得 10 万港币资助',year:'2026',level:'international',images:['assets/honors/cyberport1.jpg','assets/honors/cyberport2.jpg']},
+  {icon:'database',title:'人大金仓数据库认证',desc:'KCA + KCP 数据库管理专业认证',year:'2025',level:'certification',images:['assets/honors/kca.jpg','assets/honors/kcp.jpg']},
+  {icon:'trophy',title:'挑战杯 中国大学生创业竞赛',desc:'省级奖项 — LinkHome 链家装项目获评委高度认可',year:'2026',level:'provincial',images:['assets/honors/challenge_cup.jpg']},
+  {icon:'medal',title:'第四届广东信创大赛选拔赛',desc:'数据库管理员组 三等奖',year:'2025',level:'provincial',images:['assets/honors/xinchuang.jpg']},
+  {icon:'trophy',title:'世界职业院校技能大赛',desc:'工业互联网集成应用 省一等奖',year:'2025',level:'provincial',images:['assets/honors/world_skills.jpg']}
+];
+
+// ========== RENDER ==========
+// Projects
+const pl = document.getElementById('projects-list');
+PROJECTS.forEach(p => {
+  const d = document.createElement('div');
+  d.className = 'project-card';
+  d.id = 'project-'+p.id;
+  d.setAttribute('onclick', "location.href='project-detail.html?id="+p.id+"'");
+  d.innerHTML = `
+    <div class="project-video">
+      <video autoplay loop muted playsinline><source src="${p.video}" type="video/mp4"></video>
+      <div class="project-video-overlay"></div>
+      <div class="project-role">${p.role}</div>
+    </div>
+    <div class="project-body">
+      <div class="project-flex">
+        <div>
+          <div class="project-title">${p.title}</div>
+          <div class="project-period">${p.period}</div>
+          <div class="project-desc">${p.desc}</div>
+          <div>${p.tags.map(t=>'<span class="tag">'+t+'</span>').join('')}</div>
+          <a href="project-detail.html?id=${p.id}" class="project-link" style="margin-top:24px">了解更多 <i data-lucide="chevron-right" style="width:16px;height:16px"></i></a>
+        </div>
+        <div>
+          <div class="highlights-title">成果亮点</div>
+          <ul class="highlights-list">${p.highlights.map(h=>'<li><span class="highlights-dot"></span>'+h+'</li>').join('')}</ul>
+        </div>
+      </div>
+    </div>`;
+  pl.appendChild(d);
+});
+
+// Skills
+const sg = document.getElementById('skills-grid');
+SKILLS.forEach(s => {
+  const d = document.createElement('div');
+  d.className = 'skill-card';
+  d.innerHTML = `
+    <div class="skill-icon"><i data-lucide="${s.icon}" style="width:28px;height:28px;color:var(--accent)"></i></div>
+    <div class="skill-title">${s.title}</div>
+    <div class="skill-desc">${s.desc}</div>
+    <div class="skill-tags">${s.tags.map(t=>'<span class="skill-tag">'+t+'</span>').join('')}</div>`;
+  sg.appendChild(d);
+});
+
+// Honors
+const hg = document.getElementById('honors-grid');
+HONORS.forEach(h => {
+  const d = document.createElement('div');
+  d.className = 'honor-card';
+  const lvl = h.level==='international'?'level-intl':h.level==='provincial'?'level-prov':'level-cert';
+  const lvlLabel = h.level==='international'?'国际级':h.level==='provincial'?'省级':'认证';
+  const imgHtml = h.images.length>1
+    ? `<div class="cert-img" data-images='${JSON.stringify(h.images)}'>
+         <img src="${h.images[0]}" alt="${h.title}">
+         <div class="cert-dots">${h.images.map((_,i)=>'<button class="cert-dot'+(i===0?' active':'')+'" data-i="'+i+'"></button>').join('')}</div>
+       </div>`
+    : `<div class="cert-img"><img src="${h.images[0]}" alt="${h.title}"></div>`;
+  d.innerHTML = `
+    <div class="honor-header">
+      <div class="honor-icon"><i data-lucide="${h.icon}" style="width:20px;height:20px;color:var(--accent)"></i></div>
+      <div>
+        <span class="honor-level ${lvl}">${lvlLabel}</span>
+        <span class="honor-year">${h.year}</span>
+        <div class="honor-title">${h.title}</div>
+        <div class="honor-desc">${h.desc}</div>
+      </div>
+    </div>
+    ${imgHtml}`;
+  hg.appendChild(d);
+});
+
+// Refresh Lucide icons
+lucide.createIcons();
+</script>
+
+<script>
+// ========== ANIMATIONS ==========
+gsap.registerPlugin(ScrollTrigger);
+
+// Hero opening
+const heroTl = gsap.timeline({defaults:{ease:'power3.out'}});
+heroTl.fromTo('#hero-title span',{y:80,opacity:0,rotateX:15},{y:0,opacity:1,rotateX:0,duration:1.4,stagger:.08,ease:'power4.out'},.6);
+heroTl.fromTo('#hero-sub',{y:40,opacity:0},{y:0,opacity:1,duration:1.2},1.4);
+heroTl.fromTo('#scroll-btn',{y:20,opacity:0},{y:0,opacity:1,duration:1},2.2);
+
+// Progress bar
+ScrollTrigger.create({trigger:document.body,start:'top top',end:'bottom bottom',onUpdate:self=>{document.getElementById('progress').style.transform='scaleX('+self.progress+')'}});
+
+// Section scroll animations
+document.querySelectorAll('[id]').forEach(el => {
+  const id = el.id;
+  if(['hero','about','projects','skills','honors','contact'].includes(id)) {
+    el.querySelectorAll('.heading, [class*="stat-value"], .project-card, .skill-card, .honor-card, .contact-card, .btn-primary, .btn-social, .avatar-frame > div, .bio-section > div').forEach((child,i) => {
+      gsap.fromTo(child,{opacity:0,y:60},{opacity:1,y:0,duration:.9,delay:i*.08,ease:'power3.out',scrollTrigger:{trigger:el,start:'top 80%',toggleActions:'play none none none'}});
+    });
+  }
+});
+
+// Cert image rotation
+document.querySelectorAll('.cert-img[data-images]').forEach(el => {
+  const images = JSON.parse(el.getAttribute('data-images'));
+  let idx = 0;
+  const img = el.querySelector('img');
+  const dots = el.querySelectorAll('.cert-dot');
+  setInterval(() => {
+    idx = (idx+1)%images.length;
+    img.style.opacity = '0';
+    setTimeout(() => {
+      img.src = images[idx];
+      img.style.opacity = '1';
+      dots.forEach((d,i) => d.classList.toggle('active',i===idx));
+    },300);
+  },10000);
+  dots.forEach(d => d.addEventListener('click', e => {
+    idx = parseInt(e.target.getAttribute('data-i'));
+    img.src = images[idx];
+    dots.forEach((dd,i) => dd.classList.toggle('active',i===idx));
+  }));
+});
+
+// Smooth scroll
+document.querySelectorAll('a[href^="#"]').forEach(a => {
+  a.addEventListener('click', e => {
+    e.preventDefault();
+    const t = document.querySelector(a.getAttribute('href'));
+    if(t) window.scrollTo({top:t.getBoundingClientRect().top+window.scrollY-80,behavior:'smooth'});
+  });
+});
+
+// Init ScrollTrigger
+ScrollTrigger.refresh();
+
+// Scroll to project if URL has scrollTo param
+(function(){
+  const params = new URLSearchParams(window.location.search);
+  const scrollTo = params.get('scrollTo');
+  if (scrollTo) {
+    setTimeout(function(){
+      const el = document.getElementById(scrollTo);
+      if (el) {
+        window.scrollTo({top: el.getBoundingClientRect().top + window.scrollY - 100, behavior: 'smooth'});
+      }
+    }, 300);
+  }
+})();
+</script>
+
+<script>
+// ========== STARFIELD BACKGROUNDS (pure canvas, no dependencies) ==========
+(function(){
+  const STARFIELD_CONFIGS = {
+    'sf-about':    { hue: 200, density: 1.2, glow: 0.5, speed: 1.0 },
+    'sf-projects': { hue: 30,  density: 1.0, glow: 0.4, speed: 1.0 },
+    'sf-skills':   { hue: 260, density: 1.3, glow: 0.5, speed: 1.0 },
+    'sf-honors':   { hue: 45,  density: 0.8, glow: 0.6, speed: 1.0 },
+    'sf-contact':  { hue: 180, density: 1.5, glow: 0.6, speed: 0.6 },
+  };
+
+  const running = new WeakMap();
+  const observers = [];
+
+  Object.entries(STARFIELD_CONFIGS).forEach(([id, cfg]) => {
+    const canvas = document.getElementById(id);
+    if (!canvas) return;
+
+    const section = canvas.closest('.section');
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    const N = Math.floor(180 * cfg.density);
+    const stars = [];
+    const mouse = { x: 0.5, y: 0.5, active: 0 };
+    let animId = null;
+    let w = 0, h = 0;
+
+    function resize() {
+      const rect = section.getBoundingClientRect();
+      w = canvas.width = rect.width;
+      h = canvas.height = rect.height;
+      canvas.style.width = w + 'px';
+      canvas.style.height = h + 'px';
+    }
+
+    function initStars() {
+      stars.length = 0;
+      for (let i = 0; i < N; i++) {
+        // Convert hue to RGB-like components
+        const hRad = (cfg.hue / 360) * Math.PI * 2;
+        const r = 0.6 + 0.4 * Math.cos(hRad);
+        const g = 0.6 + 0.4 * Math.cos(hRad + 2.094);
+        const b = 0.6 + 0.4 * Math.cos(hRad + 4.188);
+
+        stars.push({
+          x: Math.random(),
+          y: Math.random(),
+          r: 0.3 + Math.random() * 1.8 * cfg.glow,
+          baseR: 0.3 + Math.random() * 1.8 * cfg.glow,
+          twinklePhase: Math.random() * Math.PI * 2,
+          twinkleSpeed: 0.002 + Math.random() * 0.008,
+          layer: Math.floor(Math.random() * 3),
+          cr: r * (0.6 + Math.random() * 0.4),
+          cg: g * (0.6 + Math.random() * 0.4),
+          cb: b * (0.6 + Math.random() * 0.4),
+        });
+      }
+    }
+
+    function draw() {
+      ctx.clearRect(0, 0, w, h);
+
+      const mx = mouse.x * w;
+      const my = mouse.y * h;
+      const ma = mouse.active;
+
+      stars.forEach(s => {
+        // Repulsion from mouse
+        const sx = s.x * w;
+        const sy = s.y * h;
+        let dx = sx - mx;
+        let dy = sy - my;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        const repulseRadius = 150;
+        let rx = sx, ry = sy;
+
+        if (ma > 0 && dist < repulseRadius) {
+          const force = (1 - dist / repulseRadius) * 30 * ma;
+          const angle = Math.atan2(dy, dx);
+          rx = sx + Math.cos(angle) * force;
+          ry = sy + Math.sin(angle) * force;
+        }
+
+        // Twinkle
+        const twinkle = 0.5 + 0.5 * Math.sin(Date.now() * s.twinkleSpeed + s.twinklePhase);
+        const alpha = (0.3 + 0.7 * twinkle) * cfg.glow;
+        const radius = s.r * (0.7 + 0.3 * twinkle);
+
+        // Draw star
+        ctx.beginPath();
+        ctx.arc(rx, ry, radius, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(${Math.floor(s.cr * 255)},${Math.floor(s.cg * 255)},${Math.floor(s.cb * 255)},${alpha})`;
+        ctx.fill();
+
+        // Glow for larger stars
+        if (s.r > 1.0) {
+          const glow = ctx.createRadialGradient(rx, ry, 0, rx, ry, radius * 3);
+          glow.addColorStop(0, `rgba(${Math.floor(s.cr * 255)},${Math.floor(s.cg * 255)},${Math.floor(s.cb * 255)},${alpha * 0.3})`);
+          glow.addColorStop(1, 'rgba(0,0,0,0)');
+          ctx.beginPath();
+          ctx.arc(rx, ry, radius * 3, 0, Math.PI * 2);
+          ctx.fillStyle = glow;
+          ctx.fill();
+        }
+      });
+
+      animId = requestAnimationFrame(draw);
+    }
+
+    function onMouseMove(e) {
+      const rect = canvas.getBoundingClientRect();
+      mouse.x = (e.clientX - rect.left) / rect.width;
+      mouse.y = (e.clientY - rect.top) / rect.height;
+      mouse.active = 1;
+    }
+    function onMouseLeave() { mouse.active = 0; }
+
+    function start() {
+      resize();
+      if (!stars.length) initStars();
+      animId = requestAnimationFrame(draw);
+      canvas.addEventListener('mousemove', onMouseMove);
+      canvas.addEventListener('mouseleave', onMouseLeave);
+      running.set(canvas, true);
+    }
+
+    function stop() {
+      if (animId) { cancelAnimationFrame(animId); animId = null; }
+      canvas.removeEventListener('mousemove', onMouseMove);
+      canvas.removeEventListener('mouseleave', onMouseLeave);
+      running.set(canvas, false);
+    }
+
+    // IntersectionObserver: only render when visible
+    if (window.IntersectionObserver) {
+      const obs = new IntersectionObserver(entries => {
+        entries.forEach(e => {
+          if (e.isIntersecting) start();
+          else stop();
+        });
+      }, { threshold: 0.05 });
+      obs.observe(section);
+      observers.push(obs);
+    } else {
+      // Fallback: always run
+      start();
+    }
+  });
+
+  // Handle resize
+  window.addEventListener('resize', () => {
+    Object.keys(STARFIELD_CONFIGS).forEach(id => {
+      const c = document.getElementById(id);
+      if (c && running.get(c)) {
+        const s = c.closest('.section');
+        const r = s.getBoundingClientRect();
+        c.width = r.width;
+        c.height = r.height;
+      }
+    });
+  });
+})();
+</script>
+</body>
+</html>
